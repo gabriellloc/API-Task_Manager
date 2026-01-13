@@ -27,7 +27,7 @@ O projeto utiliza Docker Compose para facilitar o setup do ambiente de desenvolv
 git clone https://github.com/gabriellloc/api-task_manager.git
 
 # Acesse o diretório
-cd api-task-manager
+cd api-task_manager
 
 # Instale as dependências
 npm install
@@ -59,6 +59,17 @@ Crie um arquivo <code>.env</code> na raiz do projeto:
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
 JWT_SECRET=suaChave
+```
+
+## Criando o Banco de Dados
+Após configurar o arquivo `.env`, execute as migrações do Prisma para criar o banco de dados:
+
+```bash
+npx prisma generate
+npx prisma migrate dev
+
+# Para abrir o Prisma Studio
+npx prisma studio
 ```
 
 ## 📜 Licença
