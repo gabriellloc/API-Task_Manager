@@ -42,6 +42,15 @@ class TasksController {
       },
     });
 
+    await prisma.tasksHistory.create({
+      data: {
+        taskId: response.id,
+        changedBy: response.assignedTo,
+        oldStatus: response.status,
+        newStatus: response.status,
+      },
+    });
+
     return res.status(201).json(response);
   }
 
@@ -71,6 +80,10 @@ class TasksController {
       where: { id },
     });
 
+		if (!req.user?.id) {
+      throw new AppError("User not found", 401);
+    }
+
     if (req.user?.role != "admin" && req.user?.id !== task?.assignedTo) {
       throw new AppError("This task could not be loaded.", 401);
     }
@@ -94,6 +107,19 @@ class TasksController {
     }
     const updatedTask = await prisma.tasks.findFirst({
       where: { id },
+    });
+
+    if (!updatedTask) {
+      throw new AppError("Not found", 404);
+    }
+
+    await prisma.tasksHistory.create({
+      data: {
+        taskId: updatedTask.id,
+        changedBy: req.user.id,
+        oldStatus: task.status,
+        newStatus: updatedTask.status,
+      },
     });
 
     return res.json({ status: updatedTask?.status, task: updatedTask });
